@@ -14,8 +14,23 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: Scaffold(
-            appBar: AppBar(
+        home: const HomePage());
+  }
+}
+
+  class HomePage extends StatefulWidget{
+    const HomePage({Key? key}) : super(key: key);
+     
+     @override
+     HomePageState createState() => HomePageState();
+  }
+
+  class HomePageState extends State<HomePage> {
+
+    @override
+    Widget build(context){
+      return Scaffold(
+       appBar: AppBar(
               title: const Text('Flutter + Flutterwave'),
               centerTitle: true,
             ),
@@ -24,6 +39,7 @@ class MyApp extends StatelessWidget {
                 child: const Text('Pay with Flutterwave'),
                 onPressed: () {},
               ),
-            )));
+            )
+      );
+    }
   }
-}
