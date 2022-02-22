@@ -111,6 +111,22 @@ void _makePayment(BuildContext context, String fullname, String phone, String em
           acceptUgandaPayment: false,
           acceptZambiaPayment: false
           );
+   
+    final response = await flutterwave.initializeForUiPayments();
+    if (response == null) {
+        print("Transaction Failed");
+      } else {
+        ///
+        if (response.status == "success") {
+          print(response.data);
+          print(response.message);
 
+        } else {
+          print(response.message);
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 }
