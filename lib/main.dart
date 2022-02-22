@@ -15,13 +15,15 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.green,
         ),
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Flutter + Flutterwave'),
-            centerTitle: true,
-          ),
-          body: const Center(
-            child: Text('Heey There!'),
-          ),
-        ));
+            appBar: AppBar(
+              title: const Text('Flutter + Flutterwave'),
+              centerTitle: true,
+            ),
+            body: Center(
+              child:ElevatedButton(
+                child: const Text('Pay with Flutterwave'),
+                onPressed: () {},
+              ),
+            )));
   }
 }
