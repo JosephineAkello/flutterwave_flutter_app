@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/flutterwave.dart';
+import 'secrets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   //use the currency you would like the use to Pay In, in this case used KES currency
   final String currency = FlutterwaveCurrency.KES;
+  final formKey = GlobalKey<FormState>();
   final TextEditingController fullname = TextEditingController();
   final TextEditingController phone = TextEditingController();
   final TextEditingController email = TextEditingController();
@@ -43,7 +45,9 @@ class HomePageState extends State<HomePage> {
         ),
         body: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-       child: Column(
+       child: Form(
+            key: formKey,
+         child:Column(
           children: [
           const Padding(padding: EdgeInsets.all(10.0)),
           Container(
@@ -51,6 +55,8 @@ class HomePageState extends State<HomePage> {
             child: TextFormField(
               controller: fullname,
               decoration: const InputDecoration(labelText: "Full Name"),
+                   validator: (value) =>
+                      value!.isNotEmpty? null : "Please fill in Your Name",
             ),
           ),
           Container(
@@ -58,6 +64,8 @@ class HomePageState extends State<HomePage> {
             child: TextFormField(
               controller: phone,
               decoration: const InputDecoration(labelText: "Phone Number"),
+               validator: (value) =>
+                      value!.isNotEmpty? null : "Please fill in Your Phone number",
             ),
           ),
           Container(
@@ -65,6 +73,8 @@ class HomePageState extends State<HomePage> {
             child: TextFormField(
               controller: email,
               decoration: const InputDecoration(labelText: "Email"),
+                validator: (value) =>
+                      value!.isNotEmpty? null : "Please fill in Your Email",
             ),
           ),
           Container(
@@ -72,18 +82,29 @@ class HomePageState extends State<HomePage> {
             child: TextFormField(
               controller: amount,
               decoration: const InputDecoration(labelText: "Amount"),
-            ),
+              validator: (value) =>
+                      value!.isNotEmpty? null : "Please fill in the Amount you are Paying",
+                ),
           ),
           ElevatedButton(
             child: const Text('Pay with Flutterwave'),
-            onPressed: () {},
+            onPressed: () {
+              final name = fullname.text;
+              final userPhone = phone.text;
+              final userEmail = email.text;
+              final amountPaid = amount.text;
+
+              if (formKey.currentState!.validate()) {
+              _makeFlutterwavePayment(context,name,userPhone,userEmail,amountPaid);
+             }
+            },
           ),
-        ])));
+        ]))));
   }
 
   //Add a method to make the flutter wave payment
   //This Method includes all the values needed to create the Flutterwave Instance
-void _makePayment(BuildContext context, String fullname, String phone, String email, String amount) async {
+void _makeFlutterwavePayment(BuildContext context, String fullname, String phone, String email, String amount) async {
     try {
       Flutterwave flutterwave = Flutterwave.forUIPayment(
           //the first 10 fields below are required/mandatory
@@ -93,17 +114,17 @@ void _makePayment(BuildContext context, String fullname, String phone, String em
           email: email,
           amount: amount,
           //Use your Public and Encription Keys from your Flutterwave account on the dashboard
-          encryptionKey: "Your Encription Key",
-          publicKey: "Your Public Key",
+          encryptionKey: encriptionKey,
+          publicKey: publicKey,
           currency: currency,
           txRef: DateTime.now().toIso8601String(),
           //Setting DebugMode below to true since will be using test mode.
           //You can set it to false when using production environment.
           isDebugMode: true,
           //configure the the type of payments that your business will accept
-          acceptCardPayment: true,
-          acceptUSSDPayment: true,
-          acceptAccountPayment: true,
+          acceptCardPayment: false,
+          acceptUSSDPayment: false,
+          acceptAccountPayment: false,
           acceptFrancophoneMobileMoney: false,
           acceptGhanaPayment: false,
           acceptMpesaPayment: true,
@@ -116,8 +137,7 @@ void _makePayment(BuildContext context, String fullname, String phone, String em
     if (response == null) {
         print("Transaction Failed");
       } else {
-        ///
-        if (response.status == "success") {
+        if (response.status == "Transaction successful") {
           print(response.data);
           print(response.message);
 
